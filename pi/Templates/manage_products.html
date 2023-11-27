@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block title %}Products{%endblock%}
+{% block custom_css %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='manage_products.css') }}">
+{% endblock %}
+
+{% block content%}
+
+<div class="container1">
+    <div class="title">Manage products</div>
+        
+            <div class="btn">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                    Click me
+                </button>
+            </div>
+            <div class="product-table">
+                <table class = "tbl">
+                    <thead>
+                        <tr>
+                           
+                            <th>Product ID</th>
+                            <th>Product Name</th>
+                            
+                            <th>Price per Unit</th>
+                            <th>Unit</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                        <tr id="productRow_{{ product.primary_id }}">
+                            <td>{{ product.primary_id }}</td>
+                            <td>{{ product.product_name }}</td>
+                           
+                            <td>{{ product.price }}</td>
+                            <td>{{ product.uom_name }}</td>
+                            <td><button type="button" onclick="deleteProduct('{{ product.primary_id }}')">Delete</button></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+    
+</div>
+
+<div class="modal" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Product Information</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <!-- Your input fields go here -->
+                <!-- Example: -->
+                <form id="productForm" method="post" action="/manage-products" enctype="multipart/form-data">
+                    <!-- Your input fields go here -->
+                    <!-- Example: -->
+                    <div class="form-group">
+                        <label for="productName">Product Name:</label>
+                        <input type="text" class="form-control" id="productName" name="productName">
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Price per Unit:</label>
+                        <input type="text" class="form-control" id="price" name="price">
+                    </div>
+                    <div class="form-group">
+                        <label for="unit">Unit of measure:</label>
+                        <select class="form-control" id="unit" placeholder="Select an option" name="unit">
+                            <option value="1">Each</option>
+                            <option value="2">Kg</option>
+                            
+                            <!-- Add more options as needed -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="productImage">Product Image:</label>
+                        <input type="file" class="form-control-file" id="productImage" name="productImage">
+                    </div>
+                    <!-- Add more input fields as needed -->
+                </form>
+                <!-- Add more input fields as needed -->
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="saveProduct()">Save</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function saveProduct() {
+    // Get input values
+    var productName = document.getElementById('productName').value;
+    var price = document.getElementById('price').value;
+    var unit = document.getElementById('unit').value;
+    var productImageInput = document.getElementById('productImage');
+    var productImageFile = productImageInput.files[0]; // Assuming you only allow single file uploads
+
+
+    var formData = new FormData();
+        formData.append('productName', productName);
+        formData.append('price', price);
+        formData.append('unit', unit);
+        formData.append('productImage', productImageFile);
+
+        fetch('/manage-products', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response from the server
+            console.log(data);
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function deleteProduct(productId) {
+        // You can use AJAX or fetch to send a request to your Flask backend for deleting the product
+        fetch(`/manage-products?productId=${productId}`, {
+            method: 'DELETE',
+
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response from the server
+            console.log(data);
+            const deletedRow = document.getElementById(`productRow_${productId}`);
+            if (deletedRow) {
+                deletedRow.remove();
+        }
+            // You might want to update the UI or refresh the page after successful deletion
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    // Get other input values as needed
+
+    // Perform validation if necessary
+
+    // Save data to the database using your Flask backend
+    // (You'll need to implement this part using AJAX or form submission)
+
+</script>
+
+{%endblock%}

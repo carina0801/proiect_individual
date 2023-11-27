@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Products{%endblock%}
+{% block custom_css %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='signup.css') }}">
+{% endblock %}
+
+{% block content%}
+
+<div class="center">
+    <form id="productForm" method="post" action="/signup" enctype="multipart/form-data" onsubmit="return saveUser()">
+        <!-- Your input fields go here -->
+        <!-- Example: -->
+        <div class="form-signup">
+            <label for="productName">Name:</label>
+            <input type="text" class="form-control" id="name" name="name">
+        </div>
+        <div class="form-group">
+            <label for="price">Last name:</label>
+            <input type="text" class="form-control" id="last_name" name="last_name">
+        </div>
+        <div class="form-group">
+            <label for="unit">Username:</label>
+            <input type="text" class="form-control" id="user" name="user">
+                
+        </div>
+        <div class="form-group">
+            <label for="unit">Email:</label>
+            <input type="email" class="form-control" id="email" name="email">
+                
+        </div>
+        <div class="form-group">
+            <label for="unit">Password:</label>
+            <input type="password" class="form-control" id="password" name="password">
+                
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <!-- Add more input fields as needed -->
+    </form>
+</div>
+
+<script>
+    function saveUser() {
+        
+        // Your validation and other logic here
+
+        var name = document.getElementById('name').value;
+        var lastName = document.getElementById('last_name').value;
+        var username = document.getElementById('user').value;
+        var email = document.getElementById('email').value;
+        var password = document.getElementById('password').value;
+
+        // Validate inputs
+        if (!name || !lastName || !username || !email || !password) {
+            alert('All fields are required. Please fill in all the fields.');
+            return false; // Prevent form submission
+        }
+
+        
+
+        var formData = new FormData();
+        formData.append('name', name);
+        formData.append('last_name', lastName);
+        formData.append('user', username);
+        formData.append('email', email);
+        formData.append('password', password);
+
+        fetch('/signup', {
+            method: 'POST',
+            body: formData
+        })
+
+        .then(response => response.json())
+        // Return true to allow form submission or false to prevent it
+        .then(data => {
+            // Handle the response from the server
+            console.log(data);
+            if (data.error) {
+                alert(data.error);
+            }
+            // You can optionally perform actions based on the server response
+        })
+        .catch(error => console.error('Error:', error));
+        return false;//this prevents form submition in case of error
+    }
+</script>
+
+{%endblock%}

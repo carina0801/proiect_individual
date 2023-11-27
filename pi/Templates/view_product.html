@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Products{%endblock%}
+{% block custom_css %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='view_product.css') }}">
+{% endblock %}
+{% block content%}
+<div class="container1">
+    <div class="picture">
+        <img src = "/{{ product.image }}" class ="img">
+    </div>
+    <div class="info">
+        <h1>{{product.product_name}}</h1>
+        <p>{{product.price}} lei {{product.uom_name}}</p>
+        <div class = "quantity">
+            <label for="quantity">Select Quantity:</label>
+            <br>
+            <input type="number" id="quantity" name="quantity" min="1" placeholder="Enter quantity">
+        </div>
+        <input type="hidden" id="primary_id" value="{{ product.primary_id }}">
+        <div class="but">
+        <button type="button" onclick="addToCart()" class = "but1">Add to Cart</button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+
+var id = document.getElementById('primary_id').value
+var quantity = document.getElementById('quantity').value;
+console.log(id)
+function addToCart() {
+
+    var quantity = document.getElementById('quantity').value;
+
+    // Check if the quantity is at least 1
+    if (quantity < 1) {
+        alert('Quantity must be at least 1');
+        return;
+    }
+
+    // Check if the user is authenticated
+    fetch('/check_auth', {
+        method: 'GET',
+    })
+
+    .then(response => {
+        if (response.status === 200) {
+
+            return fetch(`/cart/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ quantity: quantity }),
+            });
+            
+        } else {
+            window.location.href = '/login'
+            alert("You must be logged in to add to cart!")
+        }
+    })
+
+    .then(response => {
+        if (response.status === 200) {
+            // Product added to cart successfully
+            alert("Item added to cart!");
+        } else {
+            // Handle error response
+            return response.json();
+        }
+    })
+
+    .catch(error => console.error('Error', error))
+
+}
+</script>
+
+{%endblock%}

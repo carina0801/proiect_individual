@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Products{%endblock%}
+{% block custom_css %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='cart.css') }}">
+{% endblock %}
+{% block content%}
+<div class="contain">
+    <div class="items">
+    <h2 class="title">Your Cart</h2>
+    
+        {% for item in cart_items %}
+            
+                <div class="elem" id = "productRow_{{ item.product_info.primary_id }}">
+                   <div class="imag">
+                     <img src = "/{{ item.product_info.image }}" class = "img"/>
+                   </div>
+                   <div class="info">
+                    
+                    <div id = "price"><strong>{{ item.product_info.price}} lei</strong></div>
+                    <div>{{ item.product_info.product_name }}</div> 
+                    <div>Qty: {{item.quantity}}</div> 
+                   </div>
+                <div class="btn"><input type="button" value="Delete" onclick="deleteItem('{{ item.product_info.primary_id }}')" ></div>
+                </div>
+                
+        {% endfor %}
+    
+    
+    </div>
+    <div class="checkout">
+        <h2 class ="title">Summary</h2>
+        <div class = "totPrice">Total Price:</div>
+        <div id = "totalPrice">da</div>
+        <div><input type="button" value="Checkout" class = "btn2"></div>
+    </div>
+</div>
+
+<script>
+  function deleteItem(productId) {
+    fetch(`/view_cart?productId=${productId}`, {
+        method: 'DELETE',
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+        // Optionally, you can reload the page or update the cart display
+        const deletedRow = document.getElementById(`productRow_${productId}`);
+        if (deletedRow) {
+            deletedRow.remove();
+            updateTotalPrice();
+        } else {
+            console.error('Element not found:', `productRow_${productId}`);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+
+
+function updateTotalPrice() {
+    // Get all the elements with id starting with 'price_'
+    const priceElements = document.querySelectorAll('[id^="price"]');
+
+    // Initialize the total price
+    let totalPrice = 0;
+
+    // Iterate over each price element
+    priceElements.forEach(function (priceElement) {
+        // Extract the price value
+        const price = parseFloat(priceElement.textContent);
+
+        // Check if price is valid
+        if (!isNaN(price)) {
+            // Add the item's price to the overall total
+            totalPrice += price;
+        }
+    });
+
+    // Update the totalPrice element with the calculated total price
+    const totalPriceElement = document.getElementById('totalPrice');
+    if (totalPriceElement) {
+        totalPriceElement.textContent = `${totalPrice.toFixed(2)} lei`;
+    }
+}
+
+// Call the updateTotalPrice function when the page is fully loaded
+document.addEventListener('DOMContentLoaded', updateTotalPrice);
+
+    </script>
+
+
+{%endblock%}

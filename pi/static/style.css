@@ -1,0 +1,120 @@
+
+
+body {
+    margin: 0;
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    background-color: aliceblue;
+    background-size: cover; /* Adjusts the image to cover the entire background */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    background-attachment: fixed;
+    background-size: 100% 100%;
+   
+}
+
+
+@keyframes pulsate {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    text-decoration: none;
+    list-style: none;
+    box-sizing: border-box;
+}
+
+input.white-placeholder::placeholder{
+  color: rgb(81, 74, 74);
+}
+
+/*everything +body*/
+
+
+/*aici este navbar-ul declarat in baseclass*/
+
+nav {
+    overflow: hidden;
+    
+    height: 80px;
+    width: 100%;
+  
+    z-index: 1;
+    border-bottom: 1px solid;
+  }
+  
+  
+  nav ul {
+      float: right;
+      margin-right: 20px;
+  }
+  
+  nav ul li {
+      display: inline-block;
+      line-height: 80px;
+      margin: 0 5px;
+  }
+  
+  .icon {
+      width: 50px;
+      margin-top: 15px;
+      transition: transform 0.3s;
+    
+  }
+
+  .icon:hover {
+    transform: translateY(-5px);
+  }
+
+  label.logo{
+    color: aliceblue;
+    font-size: 50px;
+    line-height: 80px;
+    padding: 0 50px;
+    font-weight: bold;
+    -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: rgb(66, 65, 65);
+}
+
+  /*navbar declarat in base class*/
+
+  /*login box*/
+
+
+/*login box*/
+
+/*footer stuff*/
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    height: 5%;
+    width: 100%;
+    background-color: #7d7d7d;
+    color: white;
+    text-align: center;
+    padding: 5px;
+  }
+  
+  /* Style the left and right sentences */
+  .left-sentence {
+    float: left; /* Float to the left to position on the left corner */
+  }
+  
+  .right-sentence {
+    float: right; /* Float to the right to position on the right corner */
+  }
+
+  /*footer stuff*/
+
+
+
+

@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Products{%endblock%}
+{% block custom_css %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='products.css') }}">
+{% endblock %}
+
+{% block content%}
+
+<div class="all">
+
+    <div class="search-container">
+        <div class="search">
+            <input type="text" id = "search-input" class="search-input" placeholder="Search for an item">
+            <button type="submit" class="search-button" onclick="search()">Search</button>
+        </div>
+    </div>
+   
+    <div class="contain2"> {% for product in products %}
+        <div class="product-box">
+            <div class="image-container">
+                <a href="{{ url_for('view_product', product_id=product.primary_id) }}">
+                <img src="{{ product.images[0] }}" class="imagine" alt="Product Image">
+            </a>
+            </div>
+            <h3>{{ product.product_name }}</h3>
+            
+            <p>Price: {{ product.price }} lei {{ product.uom_name }}</p>
+            <!-- Add more details as needed -->
+        </div>
+    {% endfor %}</div>
+   
+</div>
+
+<script>
+
+function search() {
+    var searchTerm =  document.getElementById("search-input").value;
+
+    fetch(`/products/search?term=${searchTerm}`, {
+        method: 'GET',
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Handle the response from the server
+        updateUI(data);
+        
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function updateUI(data) {
+    // Handle updating the UI with the search results
+    // For example, you can modify the DOM elements to display the results
+    const productsContainer = document.querySelector('.contain2');
+    productsContainer.innerHTML = '';
+
+    data.forEach(product => {
+        const productBox = document.createElement('div');
+        productBox.className = 'product-box';
+
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'image-container';
+
+        const imageLink = document.createElement('a');
+        imageLink.href = `/view_product/${product.primary_id}`;
+
+        const productImage = document.createElement('img');
+        productImage.src = product.images[0];
+        productImage.alt = 'Product Image';
+        productImage.className = 'imagine';
+
+        imageLink.appendChild(productImage);
+        imageContainer.appendChild(imageLink);
+
+        const productName = document.createElement('h3');
+        productName.textContent = product.product_name;
+
+        const productDetails = document.createElement('p');
+        productDetails.textContent = `Price: ${product.price} lei ${product.uom_name}`;
+
+        productBox.appendChild(imageContainer);
+        productBox.appendChild(productName);
+        productBox.appendChild(productDetails);
+
+        productsContainer.appendChild(productBox);
+    });
+}
+
+</script>
+
+{%endblock%}
